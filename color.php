@@ -1,4 +1,4 @@
-<label>Color Name </label>
+<label>Color Name</label>
 <select id="color_id" onchange="get_color()">
     <option value="">Choose Color</option>
     <?php

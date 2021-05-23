@@ -32,6 +32,5 @@ $email = $sql_fetch['email'];
 $address = $sql_fetch['address'];
 
 $var = array("mobile"=>$phone, "email"=>$email, "address"=>$address);
-
 echo json_encode($var);
 ?>
