@@ -1,38 +1,52 @@
+<td id="status<?=$id?>">
 <?php
-if($row['status'] == 'Y'){
+if($job_status=='Active'){
 ?>
-<td><button type="button" class="btn btn-success status_<?=$row['id']?>" onclick="change_status(<?=$row['id']?>)">Approve</td>
+<button type="button" class="btn btn-success status_<?=$id?>" onclick="change_status(<?=$id?>)">Active</button>
 <?php
-} else {
+}else{
 ?>
-<td><button type="button" class="btn btn-danger status_<?=$row['id']?>" onclick="change_status(<?=$row['id']?>)">Disapprove</td>
+<button type="button" class="btn btn-danger status_<?=$id?>" onclick="change_status(<?=$id?>)">Deactive</button>
 <?php
 }
 ?>
+</td>
 
 <script>
     function change_status(id){
         $.ajax({
         type:"post",
-        url:"category_status.php",
+        url:"api/all_jobs_status.php",
         data:{id:id},
         beforeSend: function() {
-            $(".status_"+id).html('Processing...');
+        $(".status_"+id).html('Processing...');
         },
-        success:function(data)
-        {
-            var jsonObj = JSON.parse(data);
-            if(jsonObj.status == 'in'){
-                $(".status_"+id).html('Approve');
-                $(".status_"+id).css('background-color','#15ca20');
-                $(".status_"+id).css('border','1px solid #15ca20');
+        success:function(data){
+        $("#status"+id).html(data);
             }
-            else if(jsonObj.status == 'a'){
-                $(".status_"+id).html('Disapprove');
-                $(".status_"+id).css('background-color','#bd2130');
-                $(".status_"+id).css('border','1px solid #bd2130');
-            }
-        }
-    })
-}
+        })
+      }
 </script>
+
+<?php
+include("connection.php");
+$id=$_REQUEST['id'];
+
+$sql_match=mysqli_query($conn,"SELECT * FROM `post_job` WHERE `id`='$id'");
+$fetch_Data = mysqli_fetch_array($sql_match);
+if($fetch_Data['job_status'] == 'Active'){
+    $sql_updateY=mysqli_query($conn,"UPDATE post_job SET job_status='Inactive' WHERE id='$id'");
+    if($sql_updateY){
+    ?>
+    <button type="button" class="btn btn-danger status_<?=$id?>" onclick="change_status(<?=$id?>)">Deactive</button>
+    <?php
+	}
+}else{
+    $sql_updateY=mysqli_query($conn,"UPDATE post_job SET job_status='Active' WHERE id='$id'");
+    if($sql_updateY){
+	?>
+	<button type="button" class="btn btn-success status_<?=$id?>" onclick="change_status(<?=$id?>)">Active</button>
+	<?php
+	}
+}
+?>
